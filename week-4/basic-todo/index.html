@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="todo-column" id="createColumn">
+            <h2>Create Todo</h2>
+            <div>
+                <input type="text" placeholder="Title" id="title" />
+                <br />
+                <input type="text" placeholder="Description" id="description" />
+                <br />
+                <button onclick="addTodo()">Add Todo</button>
+            </div>
+        </div>
+        <div class="todo-column" id="todoColumn">
+            <h2>All Todos</h2>
+            <div id="todoList">
+                
+            </div>
+        </div>
+        <div class="todo-column" id="completedColumn">
+            <h2>Completed</h2>
+            <div id="completedList"></div>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
