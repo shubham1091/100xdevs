@@ -1,10 +1,18 @@
 import express from "express";
 import { createTodo, updateTodo } from "./types.js";
 import todo from "./db.js";
+import cors from "cors";
+import "dotenv/config";
 
 const app = express();
 
-app.use(express.json());
+const corsOptions = {
+    origin: process.env.FRONTEND,
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(express.json(), cors(corsOptions));
+
 app.get("/todos", async (req, res) => {
     try {
         const allTodo = await todo.find({});
@@ -28,7 +36,7 @@ app.post("/todo", async (req, res) => {
             description: parsedPayload.data.description,
             completed: false,
         });
-        res.json({ msg: newTodo._id });
+        res.json({ newTodo });
     } catch (error) {
         res.status(500).json({ message: "Unable to create todo" });
     }
@@ -41,8 +49,11 @@ app.put("/completed", async (req, res) => {
         res.status(411).json({ msg: "You sent the wrong imputs" });
         return;
     }
-    await todo.updateOne({ _id: parsedPayload.data.id }, { completed: true });
-    res.json({ msg: "done" });
+    // const task = await todo.updateOne({ _id: parsedPayload.data.id }, { completed: true });
+    const task = await todo.findOne({ _id: parsedPayload.data.id });
+    task.completed = true;
+    await task.save();
+    res.json({ todo: task });
 });
 
 const PORT = 3000;
