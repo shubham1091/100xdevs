@@ -1,0 +1,55 @@
+/* Todo Styles */
+.todo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #333;
+  color: #fff;
+}
+
+.todo.done {
+  background-color: #444;
+  border-color: #666;
+}
+
+.todo.done button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.todo.done button:hover {
+  background-color: #0056b3;
+}
+
+.todo.undone {
+  background-color: #444;
+  border-color: #666;
+}
+
+.todo.undone button {
+  padding: 10px 20px;
+  background-color: #00ff00;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.todo.undone button:hover {
+  background-color: #01c501;
+}
+
+.todo .description {
+  max-width: 300px;
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}

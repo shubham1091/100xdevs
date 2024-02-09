@@ -1,0 +1,29 @@
+/* Create Todo Styles */
+.todo-form {
+  margin-bottom: 20px;
+}
+
+.todo-form input[type="text"] {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #555;
+  border-radius: 5px;
+  box-sizing: border-box;
+  background-color: #444;
+  color: #fff;
+}
+
+.todo-form button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: calc(100% - 22px);;
+}
+
+.todo-form button:hover {
+  background-color: #0056b3;
+}
