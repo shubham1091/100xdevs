@@ -1,0 +1,118 @@
+[
+  {
+    "name": "Peter Parker",
+    "alias": "Spider-Man",
+    "description": "Friendly neighborhood Spider-Man with amazing powers.",
+    "interests": ["photography", "science", "helping others", "web-swinging"],
+    "socials": [
+      {
+        "media": "twitter",
+        "url": "https://twitter.com/spiderman"
+      },
+      {
+        "media": "instagram",
+        "url": "https://www.instagram.com/spiderman"
+      },
+      {
+        "media": "linkedin",
+        "url": "https://www.linkedin.com/in/peter-parker/"
+      },
+      {
+        "media": "youtube",
+        "url": "https://www.youtube.com/user/spiderman"
+      }
+    ]
+  },
+  {
+    "name": "Natasha Romanoff",
+    "alias": "Black Widow",
+    "description": "Former KGB operative, skilled spy, and master martial artist.",
+    "interests": ["espionage tactics", "hand-to-hand combat", "ballet dancing", "foreign languages"],
+    "socials": [
+      {
+        "media": "twitter",
+        "url": "https://twitter.com/blackwidow"
+      },
+      {
+        "media": "instagram",
+        "url": "https://www.instagram.com/blackwidow"
+      },
+      {
+        "media": "linkedin",
+        "url": "https://www.linkedin.com/in/natasha-romanoff/"
+      }
+    ]
+  },
+  {
+    "name": "Tony Stark",
+    "alias": "Iron Man",
+    "description": "Genius, billionaire, playboy, and philanthropist. CEO of Stark Industries.",
+    "interests": ["engineering innovations", "cutting-edge technology", "aviation", "charitable endeavors"],
+    "socials": [
+      {
+        "media": "twitter",
+        "url": "https://twitter.com/tonystark"
+      },
+      {
+        "media": "instagram",
+        "url": "https://www.instagram.com/ironman"
+      },
+      {
+        "media": "linkedin",
+        "url": "https://www.linkedin.com/in/tony-stark/"
+      }
+    ]
+  },
+  {
+    "name": "Wanda Maximoff",
+    "alias": "Scarlet Witch",
+    "description": "Powerful sorceress with reality-altering abilities.",
+    "interests": ["mystical arts", "historical studies", "mindfulness meditation", "exploring alternate realities"],
+    "socials": [
+      {
+        "media": "twitter",
+        "url": "https://twitter.com/scarletwitch"
+      },
+      {
+        "media": "instagram",
+        "url": "https://www.instagram.com/scarletwitch"
+      },
+      {
+        "media": "linkedin",
+        "url": "https://www.linkedin.com/in/wanda-maximoff/"
+      }
+    ]
+  },
+  {
+    "name": "Matt Murdock",
+    "alias": "Daredevil",
+    "description": "Blind lawyer who fights crime in Hell's Kitchen using his heightened senses.",
+    "interests": ["legal advocacy", "fighting for justice", "martial arts training", "jazz music"],
+    "socials": [
+      {
+        "media": "twitter",
+        "url": "https://twitter.com/daredevil"
+      },
+      {
+        "media": "instagram",
+        "url": "https://www.instagram.com/daredevil"
+      }
+    ]
+  },
+  {
+    "name": "T'Challa",
+    "alias": "Black Panther",
+    "description": "King of Wakanda and protector of the sacred Vibranium.",
+    "interests": ["leadership development", "technological advancement", "cultural heritage preservation", "wildlife conservation"],
+    "socials": [
+      {
+        "media": "twitter",
+        "url": "https://twitter.com/blackpanther"
+      },
+      {
+        "media": "instagram",
+        "url": "https://www.instagram.com/blackpanther"
+      }
+    ]
+  }
+]

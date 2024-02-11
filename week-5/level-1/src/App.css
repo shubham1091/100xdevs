@@ -1,0 +1,7 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three columns with equal width */
+    gap: 20px; /* Gap between grid items */
+    justify-content: center; /* Center align grid items */
+    padding: 20px; /* Add padding for better spacing */
+}
