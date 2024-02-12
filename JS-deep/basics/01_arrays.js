@@ -24,8 +24,8 @@ console.log(`Original array: ${nwArr}\n`);
 const myn1 = myArr.slice(1,3);
 
 console.log(`myn1: myArr.slice(1,3) => ${myn1}\n`);
-console.log(`myArr after slice: ${myn1}\n`);
+console.log(`myArr after slice: ${myArr}\n`);
 
 const myn2 = myArr.splice(1,3);
 console.log(`myn2: myArr.splice(1,3) => ${myn2}\n`);
-console.log(`myArr after splice: ${myn2}\n`);
+console.log(`myArr after splice: ${myArr}\n`);
