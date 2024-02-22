@@ -69,12 +69,27 @@ function OrdersList() {
                         onChange={handleSearchChange}
                         className="px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
                     />
-                    <button
-                        onClick={() => handleSort("orderAmount")}
-                        className="px-3 py-2 rounded-md bg-indigo-500 text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-1"
-                    >
-                        Sort it
-                    </button>
+                    <div className="flex items-center space-x-2">
+                        <button
+                            onClick={() => handleSort(sortBy)}
+                            className="px-3 py-2 rounded-md bg-indigo-500 text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-offset-1"
+                        >
+                            Sort by
+                        </button>
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:ring-1"
+                        >
+                            <option value="">Select criteria</option>
+                            <option value="orderId">Order ID</option>
+                            <option value="orderDate">Order Date</option>
+                            <option value="orderAmount">Order Amount</option>
+                            <option value="transactionFees">
+                                Transaction Fees
+                            </option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -149,7 +164,8 @@ function OrdersList() {
                         );
                     } else if (
                         (number === currentPage - 2 && currentPage !== 2) ||
-                        (number === currentPage + 2 && currentPage !== pageNumbers.length - 2)
+                        (number === currentPage + 2 &&
+                            currentPage !== pageNumbers.length - 2)
                     ) {
                         return (
                             <li key={number}>
