@@ -2,22 +2,23 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config");
 
 function autMiddleware(req, res, next) {
-    const auth = req.headers.authorization;
-    if (!auth || !auth.startsWith("bearer ")) {
-        return res.status(401).json({});
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("bearer ")) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
     }
-    const token = auth.split(" ")[1];
+    const token = authHeader.split(" ")[1];
 
-    const decodedValue = jwt.verify(token, JWT_SECRET);
-
-    if (decodedValue.userId) {
+    try {
+        const decodedValue = jwt.verify(token, JWT_SECRET);
         req.userId = decodedValue.userId;
         next();
-    } else {
-        res.status(403).json({
-            msg: "You are not authenticated",
-        });
-        return;
+    } catch (err) {
+        if (err.name === "TokenExpiredError") {
+            res.status(401).json({ message: "Token expired" });
+            return;
+        }
+        res.status(401).json({ message: "Invalid token" });
     }
 }
 

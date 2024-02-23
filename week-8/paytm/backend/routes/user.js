@@ -4,131 +4,157 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config");
 const authMiddleware = require("../middleware/auth");
 const { SignInUser, createUser, UpdateUser } = require("../types");
+const bcrypt = require("bcrypt");
 
 const route = Router();
 
 route.post("/signup", async (req, res) => {
-    const body = req.body;
-    // console.log(req.body);
-    const { success } = createUser.safeParse(body);
+    try {
+        const body = req.body;
+        // console.log(req.body);
+        const { success } = createUser.safeParse(body);
 
-    if (!success) {
-        res.status(411).json({
-            message: "Incorrect inputs",
-        });
-        return;
-    }
+        if (!success) {
+            res.status(400).json({
+                message: "Incorrect inputs",
+            });
+            return;
+        }
 
-    const exist = await User.findOne({ username: body.username });
+        const existingUser = await User.findOne({ username: body.username });
 
-    if (exist) {
-        res.status(411).json({
-            message: "Email already taken",
-        });
-        return;
-    }
+        if (existingUser) {
+            res.status(409).json({
+                message: "Email already taken",
+            });
+            return;
+        }
 
-    const user = await User.create(body);
+        const user = await User.create(body);
 
-    const userId = user._id;
+        const userId = user._id;
 
-    await Account.create({
-        userId,
-        balance: 1 + Math.random() * 1000,
-    });
-
-    const token = jwt.sign(
-        {
+        await Account.create({
             userId,
-        },
-        JWT_SECRET
-    );
+            balance: 1 + Math.random() * 1000,
+        });
 
-    res.json({
-        message: "User created successfully",
-        token: token,
-    });
+        const token = jwt.sign(
+            {
+                userId,
+            },
+            JWT_SECRET,
+            {
+                expiresIn: "1d"
+            }
+        );
+
+        res.json({
+            message: "User created successfully",
+            token,
+        });
+    } catch (error) {
+        console.error("Error in signup:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 });
 
 route.post("/signin", async (req, res) => {
-    const body = req.body;
+    try {
+        const body = req.body;
 
-    const { success } = SignInUser.safeParse(body);
-    if (!success) {
-        res.status(411).json({
-            message: "Incorrect inputs",
+        const { success } = SignInUser.safeParse(body);
+        if (!success) {
+            res.status(411).json({
+                message: "Incorrect inputs",
+            });
+            return;
+        }
+
+        const user = await User.findOne({
+            username: body.username,
         });
-        return;
-    }
 
-    const user = await User.findOne({
-        username: body.username,
-        password: body.password,
-    });
+        if (!user || !(await user.comparePassword(body.password))) {
+            res.status(401).json({
+                message: "Invalid username or password",
+            });
+            return;
+        }
 
-    if (!user) {
-        res.status(411).json({
-            message: "Error while logging in",
+        const token = jwt.sign(
+            {
+                userId: user._id,
+            },
+            JWT_SECRET,
+            {
+                expiresIn: "1d",
+            }
+        );
+
+        res.json({
+            token,
         });
-        return;
+    } catch (error) {
+        console.error("Error in signin:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-
-    const token = jwt.sign(
-        {
-            userId: user._id,
-        },
-        JWT_SECRET
-    );
-
-    res.json({
-        token: token,
-    });
 });
 
 route.put("/", authMiddleware, async (req, res) => {
-    const body = req.body;
+    try {
+        const body = req.body;
 
-    const { success } = UpdateUser.safeParse(body);
+        const { success } = UpdateUser.safeParse(body);
 
-    if (!success) {
-        res.status(411).json({
-            message: "Incorrect inputs",
+        if (!success) {
+            res.status(411).json({
+                message: "Incorrect inputs",
+            });
+            return;
+        }
+
+        await User.findByIdAndUpdate(req.userId, body);
+
+        res.json({
+            message: "User updated successfully",
         });
-        return;
+    } catch (err) {
+        console.error("Error in updating user:", err);
+        res.status(500).json({ message: "Internal server error" });
     }
-
-    await User.findByIdAndUpdate(req.userId, body);
-
-    res.json({
-        message: "User updated successfully",
-    });
 });
 
 route.get("/bulk", async (req, res) => {
-    const filter = req.query.filter || "";
+    try {
+        const filter = req.query.filter || "";
 
-    const users = await User.find({
-        $or: [
-            {
-                firstName: {
-                    $regex: filter,
+        const users = await User.find({
+            $or: [
+                {
+                    firstName: {
+                        $regex: filter,
+                    },
                 },
-            },
-            {
-                lastName: {
-                    $regex: filter,
+                {
+                    lastName: {
+                        $regex: filter,
+                    },
                 },
-            },
-        ],
-    });
+            ],
+        });
 
-    res.json({
-        users: users.map((user) => ({
-            _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-        })),
-    });
+        res.json({
+            users: users.map((user) => ({
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+            })),
+        });
+    } catch (error) {
+        console.error("Error in fetching users: ", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 });
 
 module.exports = route;

@@ -1,10 +1,17 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const main = async () => {
-    await mongoose.connect(process.env.DB_URL);
+    try {
+        await mongoose.connect(process.env.DB_URL);
+        console.log("Connected to the database");
+    } catch (error) {
+        console.error("Error connecting to the database:", error);
+        process.exit(1);
+    }
 };
 
-main().catch((err) => console.log(err));
+main();
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -34,6 +41,38 @@ const UserSchema = new mongoose.Schema({
         maxLength: 50,
     },
 });
+
+UserSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) return next();
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(this.password, salt);
+        this.password = hashedPassword;
+        next();
+    } catch (error) {
+        return next(error);
+    }
+});
+
+UserSchema.pre("findOneAndUpdate", async function(next) {
+    const update = this.getUpdate();
+    if (!update.password) return next();
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(update.password, salt);
+        update.password = hashedPassword;
+        next();
+    } catch (error) {
+        return next(error);
+    }
+});
+
+UserSchema.methods.comparePassword = async function(candidatePassword) {
+    return bcrypt.compare(candidatePassword, this.password);
+};
+
 
 const AccountSchema = new mongoose.Schema({
     userId: {

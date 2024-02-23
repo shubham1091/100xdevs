@@ -7,4 +7,9 @@ const route = Router();
 route.use("/user", UserRoute);
 route.use("/account", AccountRoute);
 
+route.use((err, req, res, next) => {
+    console.error("Error: ", err);
+    res.status(500).json({ message: "Internal Server Error" });
+});
+
 module.exports = route;
