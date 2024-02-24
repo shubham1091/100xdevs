@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const { v4: uuidv4 } = require("uuid");
 
 const main = async () => {
     try {
@@ -40,6 +41,10 @@ const UserSchema = new mongoose.Schema({
         trim: true,
         maxLength: 50,
     },
+    resetToken: {
+        type: String,
+        default: null,
+    },
 });
 
 UserSchema.pre("save", async function (next) {
@@ -55,7 +60,7 @@ UserSchema.pre("save", async function (next) {
     }
 });
 
-UserSchema.pre("findOneAndUpdate", async function(next) {
+UserSchema.pre("findOneAndUpdate", async function (next) {
     const update = this.getUpdate();
     if (!update.password) return next();
 
@@ -69,10 +74,28 @@ UserSchema.pre("findOneAndUpdate", async function(next) {
     }
 });
 
-UserSchema.methods.comparePassword = async function(candidatePassword) {
+UserSchema.methods.comparePassword = async function (candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };
 
+UserSchema.methods.generateResetToken = async function () {
+    try {
+        // Generate a random token
+        const resetToken = uuidv4();
+
+        // Hash the token
+        const hashedResetToken = await bcrypt.hash(resetToken, 10);
+
+        // Store the hashed token in the resetToken field
+        this.resetToken = hashedResetToken;
+
+        // Return the unhashed token
+        return resetToken;
+    } catch (error) {
+        // Handle error if any
+        throw new Error("Error generating reset token");
+    }
+};
 
 const AccountSchema = new mongoose.Schema({
     userId: {

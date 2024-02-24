@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config");
 const authMiddleware = require("../middleware/auth");
 const { SignInUser, createUser, UpdateUser } = require("../types");
-const bcrypt = require("bcrypt");
 
 const route = Router();
 
@@ -45,7 +44,7 @@ route.post("/signup", async (req, res) => {
             },
             JWT_SECRET,
             {
-                expiresIn: "1d"
+                expiresIn: "1d",
             }
         );
 
@@ -125,21 +124,22 @@ route.put("/", authMiddleware, async (req, res) => {
     }
 });
 
-route.get("/bulk", async (req, res) => {
+route.get("/bulk", authMiddleware, async (req, res) => {
     try {
         const filter = req.query.filter || "";
 
+        const currentUser = req.userId;
+
         const users = await User.find({
-            $or: [
+            $and: [
                 {
-                    firstName: {
-                        $regex: filter,
-                    },
+                    _id: { $ne: currentUser }, // Exclude current user by ID
                 },
                 {
-                    lastName: {
-                        $regex: filter,
-                    },
+                    $or: [
+                        { firstName: { $regex: filter } },
+                        { lastName: { $regex: filter } },
+                    ],
                 },
             ],
         });
@@ -156,5 +156,28 @@ route.get("/bulk", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+route.get("/me", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId);
+
+        if (!user) {
+            res.status(404).json({
+                message: "User not found",
+            });
+            return;
+        }
+
+        res.json({
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        });
+    } catch (error) {
+        console.error("Error in fetching current user: ", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 
 module.exports = route;
