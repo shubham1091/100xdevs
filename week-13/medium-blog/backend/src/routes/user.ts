@@ -1,17 +1,29 @@
-import { Hono } from "hono";
+/**
+ * @module UserRouter
+ * @description Defines routes and handlers for user-related functionalities in the serverless backend.
+ */
 
-import { PrismaClient } from "@prisma/client/edge";
-import { withAccelerate } from "@prisma/extension-accelerate";
-import { sign } from "hono/jwt";
+import { Hono, Context } from "hono"; // Importing Hono framework for serverless functionality
+import { PrismaClient } from "@prisma/client/edge"; // Importing PrismaClient for database operations
+import { withAccelerate } from "@prisma/extension-accelerate"; // Importing Prisma extension for accelerated performance
+import { sign } from "hono/jwt"; // Importing sign function for JWT token generation
 
+/**
+ * Represents the router for user-related routes.
+ */
 export const userRouter = new Hono<{
     Bindings: {
-        DATABASE_URL: string;
-        JWT_SECRET: string;
+        DATABASE_URL: string; // Binding for database URL
+        JWT_SECRET: string; // Binding for JWT secret key
     };
 }>();
 
-userRouter.post("/signup", async (c) => {
+/**
+ * Handles user signup operation.
+ * @param {Context} c - The context object containing request and response objects.
+ * @returns {Promise} A Promise that resolves to the JSON response containing the JWT token.
+ */
+userRouter.post("/signup", async (c: Context) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
@@ -36,7 +48,12 @@ userRouter.post("/signup", async (c) => {
     }
 });
 
-userRouter.post("/signin", async (c) => {
+/**
+ * Handles user signin operation.
+ * @param {Context} c - The context object containing request and response objects.
+ * @returns {Promise} A Promise that resolves to the JSON response containing the JWT token.
+ */
+userRouter.post("/signin", async (c: Context) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
