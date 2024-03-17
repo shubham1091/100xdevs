@@ -1,6 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useRecoilValue } from "recoil";
 import { authState } from '../store/authState.js';
-import {useRecoilValue} from "recoil";
+import { useNavigate } from 'react-router-dom';
 
 interface Todo {
     _id: string;
@@ -16,6 +17,7 @@ const TodoList = () => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const authStateValue = useRecoilValue(authState);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getTodos = async () => {
@@ -46,7 +48,7 @@ const TodoList = () => {
         setTodos(newTodos);
     };
 
-    const markDone = async (id) => {
+    const markDone = async (id:string) => {
         const response = await fetch(`http://localhost:3000/todo/todos/${id}/done`, {
             method: 'PATCH',
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
@@ -62,7 +64,8 @@ const TodoList = () => {
                 <div style={{marginTop: 25, marginLeft: 20}}>
                     <button onClick={() => {
                         localStorage.removeItem("token");
-                        window.location = "/login";
+                        // window.location = "/login";
+                        navigate('/login');
                     }}>Logout</button>
                 </div>
             </div>
