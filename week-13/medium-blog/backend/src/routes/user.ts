@@ -3,10 +3,11 @@
  * @description Defines routes and handlers for user-related functionalities in the serverless backend.
  */
 
-import { Hono, Context } from "hono"; // Importing Hono framework for serverless functionality
-import { PrismaClient } from "@prisma/client/edge"; // Importing PrismaClient for database operations
-import { withAccelerate } from "@prisma/extension-accelerate"; // Importing Prisma extension for accelerated performance
-import { sign } from "hono/jwt"; // Importing sign function for JWT token generation
+import { Hono, Context } from "hono";
+import { PrismaClient } from "@prisma/client/edge"; 
+import { withAccelerate } from "@prisma/extension-accelerate"; 
+import { sign } from "hono/jwt"; 
+import {signinInput, signupInput} from "@shubham1091/medium-blog-common"
 
 /**
  * Represents the router for user-related routes.
@@ -24,6 +25,11 @@ export const userRouter = new Hono<{
  * @returns {Promise} A Promise that resolves to the JSON response containing the JWT token.
  */
 userRouter.post("/signup", async (c: Context) => {
+    const {success} = signupInput.safeParse(c.req.json())
+    if(!success) {
+        c.status(400)
+        return c.json({error: "Invalid input"})
+    }
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
@@ -54,6 +60,12 @@ userRouter.post("/signup", async (c: Context) => {
  * @returns {Promise} A Promise that resolves to the JSON response containing the JWT token.
  */
 userRouter.post("/signin", async (c: Context) => {
+    const {success} = signinInput.safeParse(c.req.json())
+    if(!success) {
+        c.status(400)
+        return c.json({error: "Invalid input"})
+    }
+
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());

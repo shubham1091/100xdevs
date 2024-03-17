@@ -2,6 +2,10 @@ import { Hono, Context } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify } from "hono/jwt";
+import {
+    createBlogInput,
+    updateBlogInput,
+} from "@shubham1091/medium-blog-common";
 
 /**
  * Represents the router for blog-related routes.
@@ -47,6 +51,12 @@ blogRouter.use("*", async (c: Context, next: () => Promise<any>) => {
  * @returns A JSON response containing the ID of the created post.
  */
 blogRouter.post("/", async (c: Context) => {
+    const { success } = createBlogInput.safeParse(c.req.json());
+    if (!success) {
+        c.status(400);
+        return c.json({ error: "invalid input" });
+    }
+
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
@@ -64,7 +74,8 @@ blogRouter.post("/", async (c: Context) => {
         return c.json({ id: post.id });
     } catch (error) {
         console.error(error);
-        return c.status(403);
+        c.status(403);
+        return c.json({error: "unable to create post"});
     }
 });
 
@@ -74,22 +85,33 @@ blogRouter.post("/", async (c: Context) => {
  * @returns A JSON response containing the ID of the updated post.
  */
 blogRouter.put("/", async (c: Context) => {
+    const { success } = updateBlogInput.safeParse(c.req.json());
+    if (!success) {
+        c.status(400);
+        return c.json({ error: "invalid input" });
+    }
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
 
     const body = await c.req.json();
 
-    const post = await prisma.post.update({
-        data: {
-            title: body.title,
-            content: body.content,
-        },
-        where: {
-            id: body.id,
-        },
-    });
-    return c.json({ id: post.id });
+    try {
+        const post = await prisma.post.update({
+            data: {
+                title: body.title,
+                content: body.content,
+            },
+            where: {
+                id: body.id,
+            },
+        });
+        return c.json({ id: post.id });
+    } catch (error) {
+        console.error(error);
+        c.status(403);
+        return c.json({error: "unable to update post"});
+    }
 });
 
 /**

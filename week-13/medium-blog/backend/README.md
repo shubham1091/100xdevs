@@ -51,6 +51,14 @@ Authentication is required for certain endpoints using JSON Web Tokens (JWT). Us
     }
     ```
 
+- **Response (Error - Invalid Input):**
+  - **Status:** `400 Bad Request`
+  - **Body:**
+    ```json
+    {
+        "error": "Invalid input"
+    }
+    ```
 #### 1.2 User Signin
 
 - **Endpoint:** `POST /signin`
@@ -82,6 +90,14 @@ Authentication is required for certain endpoints using JSON Web Tokens (JWT). Us
     }
     ```
 
+- **Response (Error - Invalid Input):**
+  - **Status:** `400 Bad Request`
+  - **Body:**
+    ```json
+    {
+        "error": "Invalid input"
+    }
+    ```
 ### 2. Blog Operations
 
 #### 2.1 Create Blog Post
@@ -113,6 +129,14 @@ Authentication is required for certain endpoints using JSON Web Tokens (JWT). Us
     ```json
     {
         "error": "Error message"
+    }
+    ```
+- **Response (Error - Invalid Input):**
+  - **Status:** `400 Bad Request`
+  - **Body:**
+    ```json
+    {
+        "error": "Invalid input"
     }
     ```
 
@@ -149,6 +173,14 @@ Authentication is required for certain endpoints using JSON Web Tokens (JWT). Us
     }
     ```
 
+- **Response (Error - Invalid Input):**
+  - **Status:** `400 Bad Request`
+  - **Body:**
+    ```json
+    {
+        "error": "Invalid input"
+    }
+    ```
 #### 2.3 Get Blog Post by ID
 
 - **Endpoint:** `GET /blog`
