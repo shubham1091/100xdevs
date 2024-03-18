@@ -51,7 +51,8 @@ blogRouter.use("*", async (c: Context, next: () => Promise<any>) => {
  * @returns A JSON response containing the ID of the created post.
  */
 blogRouter.post("/", async (c: Context) => {
-    const { success } = createBlogInput.safeParse(c.req.json());
+    const body = await c.req.json();
+    const { success } = createBlogInput.safeParse(body);
     if (!success) {
         c.status(400);
         return c.json({ error: "invalid input" });
@@ -60,8 +61,6 @@ blogRouter.post("/", async (c: Context) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
-
-    const body = await c.req.json();
 
     try {
         const post = await prisma.post.create({
@@ -75,7 +74,7 @@ blogRouter.post("/", async (c: Context) => {
     } catch (error) {
         console.error(error);
         c.status(403);
-        return c.json({error: "unable to create post"});
+        return c.json({ error: "unable to create post" });
     }
 });
 
@@ -85,7 +84,8 @@ blogRouter.post("/", async (c: Context) => {
  * @returns A JSON response containing the ID of the updated post.
  */
 blogRouter.put("/", async (c: Context) => {
-    const { success } = updateBlogInput.safeParse(c.req.json());
+    const body = await c.req.json();
+    const { success } = updateBlogInput.safeParse(body);
     if (!success) {
         c.status(400);
         return c.json({ error: "invalid input" });
@@ -94,13 +94,12 @@ blogRouter.put("/", async (c: Context) => {
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
 
-    const body = await c.req.json();
-
     try {
         const post = await prisma.post.update({
             data: {
                 title: body.title,
                 content: body.content,
+                published: body.published,
             },
             where: {
                 id: body.id,
@@ -110,7 +109,7 @@ blogRouter.put("/", async (c: Context) => {
     } catch (error) {
         console.error(error);
         c.status(403);
-        return c.json({error: "unable to update post"});
+        return c.json({ error: "unable to update post" });
     }
 });
 
@@ -126,13 +125,27 @@ blogRouter.get("/", async (c: Context) => {
     }).$extends(withAccelerate());
 
     try {
-        const post = await prisma.post.findUnique({ where: { id } });
+        const post = await prisma.post.findUnique({
+            where: { id },
+            select: {
+                content: true,
+                id: true,
+                title: true,
+                auther: { select: { name: true } },
+            },
+        });
         if (!post) {
-            return c.status(404);
+            c.status(404);
+            return c.json({ error: "unable to find post" });
+        }
+        if (post && post.auther && !post.auther.name) {
+            post.auther.name = "Anonymus";
         }
         return c.json(post);
     } catch (error) {
-        return c.status(404);
+        console.error(error);
+        c.status(404);
+        return c.json({ error: "error while fetching post" });
     }
 });
 
@@ -147,7 +160,19 @@ blogRouter.get("/bulk", async (c: Context) => {
     }).$extends(withAccelerate());
 
     try {
-        const posts = await prisma.post.findMany({});
+        const posts = await prisma.post.findMany({
+            select: {
+                title: true,
+                content: true,
+                id: true,
+                auther: { select: { name: true } },
+            },
+        });
+        for (const post of posts) {
+            if (!post.auther.name) {
+                post.auther.name = "Anonymus";
+            }
+        }
         return c.json(posts);
     } catch (error) {
         console.log(error);

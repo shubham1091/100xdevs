@@ -6,11 +6,13 @@
 import { Hono } from "hono";
 import { userRouter } from "./routes/user";
 import { blogRouter } from "./routes/blog";
+import { cors } from "hono/cors";
 
 /**
  * Represents the serverless backend application.
  */
 const app = new Hono().basePath("/api/v1/");
+app.use("*",cors());
 
 /**
  * Handles the root endpoint "/".
