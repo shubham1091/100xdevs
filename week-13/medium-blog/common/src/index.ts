@@ -21,6 +21,7 @@ export const updateBlogInput = z.object({
     title: z.string(),
     content: z.string(),
     id: z.string(),
+    published: z.boolean(),
 })
 
 export type SignupInput = z.infer<typeof signupInput>;
