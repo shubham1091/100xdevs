@@ -9,7 +9,7 @@ services:
       - mongodb_data:/data/db
 
   backend_serv:
-    image: backend_service
+    build: .
     container_name: backend_app
     depends_on:
       - mongodb
